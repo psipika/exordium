@@ -30,7 +30,7 @@
 (require 'cpp)
 (defun cpp-highlight-dead-code ()
   "highlight c/c++ #if 0 #endif macros"
-  (let ((color (face-background 'shadow)))
+  (let ((color "dim gray")) ;;(face-background 'shadow)))
     (setq cpp-known-face 'default)
     (setq cpp-unknown-face 'default)
     (setq cpp-known-writable 't)
