@@ -274,7 +274,7 @@ With argument, do this that many times."
     (setq fci-dash-pattern 0.5))
   (setq fci-rule-width 1)
 
-  (define-key global-map [(control |)]
+  (define-key global-map [(control f11)]
     #'(lambda ()
         (interactive)
         (fci-mode (if fci-mode 0 1))))
