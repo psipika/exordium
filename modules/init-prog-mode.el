@@ -44,8 +44,8 @@
 
 
 ;;; Step through compile errors
-(global-set-key (quote [f10]) (quote next-error))
-(global-set-key (quote [(control f10)]) (quote previous-error))
+(global-set-key (quote [f8]) (quote next-error))
+(global-set-key (quote [(control f8)]) (quote previous-error))
 
 
 

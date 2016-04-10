@@ -6,7 +6,6 @@ init-local-prefs.el
 # New names:
 before-init.el
 after-init.el
-prefs.el
 local
 
 # Melpa packages
