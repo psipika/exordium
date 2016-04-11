@@ -75,7 +75,7 @@
 
 ;;; Only show the menu bar in a graphical window
 ;;; (we don't want to loose that top line in a tty)
-(menu-bar-mode (if (null (window-system)) -1 1))
+(menu-bar-mode -1) ;;(if (null (window-system)) -1 1))
 
 ;;; Remove welcome message
 (setq inhibit-startup-message t)
