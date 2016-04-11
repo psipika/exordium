@@ -46,6 +46,9 @@
 ;; Disable ad-handle-definition warnings.
 (setq ad-redefinition-action 'accept)
 
+;; Disable audible bell
+(setq visible-bell t)
+
 ;; Ask for confirmation before quitting the client frame
 (defun save-buffers-kill-terminal--confirm-around (orig-fun &rest args)
   "Confirm killing client"
