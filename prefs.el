@@ -2,6 +2,9 @@
 (when (eq system-type 'darwin)
     (setq exordium-preferred-frame-height 50))
 
+;; Set default width to 90
+(setq exordium-preferred-frame-width 90)
+
 ;; Ask for confirmation when quitting emacs.
 (setq kill-emacs-query-functions
       (cons (lambda () (yes-or-no-p "Really kill emacs? "))
@@ -39,6 +42,9 @@
 
 ;; Set the default theme.
 (setq exordium-theme 'material)
+
+;; Disable ad-handle-definition warnings.
+(setq ad-redefinition-action 'accept)
 
 ;; Ask for confirmation before quitting the client frame
 (defun save-buffers-kill-terminal--confirm-around (orig-fun &rest args)

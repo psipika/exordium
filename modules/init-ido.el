@@ -23,6 +23,7 @@
                            "\\*Buffer List\\*"
                            "\\*Help\\*"
                            "\\*Messages\\*"
+                           "\\*scratch\\*"
                            "\\*Completions\\*"))
 
 (setq ido-enable-flex-matching t)
