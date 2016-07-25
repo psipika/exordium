@@ -57,9 +57,8 @@
   "Confirm killing client"
   (interactive)
   (when (and (frame-parameter nil 'client)
-             (yes-or-no-p "Really quit Emacs Client?"))
+	     (yes-or-no-p "Really quit Emacs Client? "))
     (apply orig-fun args)))
-(advice-add 'save-buffers-kill-terminal :around #'save-buffers-kill-terminal--confirm-around)
 
 ;; Daemon - Client config
 (cond ((daemonp)
@@ -73,7 +72,9 @@
                        (vertical-scroll-bars . right)
                        (internal-border-width . 0)
                        (horizontal-scroll-bars . t))
-                       default-frame-alist)))
+                     default-frame-alist))
+       (advice-add 'save-buffers-kill-terminal :around #'save-buffers-kill-terminal--confirm-around))
+
        (t
         (message "Setting prefs for emacs")
         (setq exordium-preferred-frame-width 120
