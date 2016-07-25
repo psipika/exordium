@@ -19,6 +19,9 @@
 ;; Disable cleaning up whitespace by default
 (setq exordium-delete-trailing-whitespace nil)
 
+;; Disable C-z as undo.
+(setq exordium-keyboard-ctrl-z-undo nil)
+
 ;; Use C-F12 to enable linum-mode.
 (global-set-key [(control f12)] 'linum-mode)
 
