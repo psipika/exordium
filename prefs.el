@@ -19,6 +19,9 @@
 ;; Disable cleaning up whitespace by default
 (setq exordium-delete-trailing-whitespace nil)
 
+;; Enable final endline at end of file
+(setq require-final-newline t)
+
 ;; Disable C-z as undo.
 (setq exordium-keyboard-ctrl-z-undo nil)
 
