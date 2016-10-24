@@ -25,6 +25,9 @@
 ;; Disable C-z as undo.
 (setq exordium-keyboard-ctrl-z-undo nil)
 
+;; Enable exordium's cmake support for rtags.
+(setq exordium-rtags-cmake t)
+
 ;; Use C-F12 to enable linum-mode.
 (global-set-key [(control f12)] 'linum-mode)
 
