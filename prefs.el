@@ -2,9 +2,6 @@
 (when (eq system-type 'darwin)
     (setq exordium-preferred-frame-height 50))
 
-;; Set default width to 90
-(setq exordium-preferred-frame-width 90)
-
 ;; Ask for confirmation when quitting emacs.
 (setq kill-emacs-query-functions
       (cons (lambda () (yes-or-no-p "Really kill emacs? "))
@@ -69,16 +66,20 @@
 	     (yes-or-no-p "Really quit Emacs Client? "))
     (apply orig-fun args)))
 
+;; Default configuration for daemon and client
+(setq exordium-preferred-frame-width 90
+      exordium-preferred-frame-height 70)
+(setq exordium-preferred-fonts '(("DejaVu Sans Mono" . 120)
+                                 ("Droid Sans Mono"  . 120)
+                                 ("Monospace"        . 120)
+                                 ("Inconsolata"      . 140)
+                                 ("Mono"             . 120)))
+
 ;; Daemon - Client config
 (cond ((daemonp)
        (message "Setting prefs for emacsclient")
-       (setq exordium-preferred-frame-width nil
-             exordium-preferred-frame-height nil)
        (setq default-frame-alist
-             (append `((font . "DejaVu Sans Mono 10")
-                       (width . 120)
-                       (height . 70)
-                       (vertical-scroll-bars . right)
+             (append `((vertical-scroll-bars . right)
                        (internal-border-width . 0)
                        (horizontal-scroll-bars . t))
                      default-frame-alist))
@@ -86,12 +87,5 @@
 
        (t
         (message "Setting prefs for emacs")
-        (setq exordium-preferred-frame-width 120
-              exordium-preferred-frame-height 70)
-        (setq exordium-preferred-fonts '(("DejaVu Sans Mono" . 100)
-                                         ("Droid Sans Mono"  . 100)
-                                         ("Monospace"        . 100)
-                                         ("Inconsolata"      . 140)
-                                         ("Mono"             . 120)))
         ))
 
