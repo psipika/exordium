@@ -49,8 +49,9 @@
 ;; For dot-mode, use 'C-c x' as preview.
 (global-set-key [(control c)(x)] 'graphviz-dot-preview)
 
-;; Set the default theme.
-(setq exordium-theme 'material)
+;; Set the default theme, only if graphical.
+(when (display-graphic-p)
+  (setq exordium-theme 'material))
 
 ;; Disable ad-handle-definition warnings.
 (setq ad-redefinition-action 'accept)
