@@ -182,6 +182,7 @@ Check the warnings and messages buffers, or restart with --debug-init")
                                          (all-the-icons           . "melpa-pinned")
                                          (graphviz-dot-mode       . "melpa")
                                          (use-package             . "melpa")
+                                         (groovy-mode             . "melpa-pinned")
                                          )
                                        exordium-extra-pinned))
       (has-refreshed nil))
@@ -283,8 +284,10 @@ the .elc exists. Also discard .elc without corresponding .el"
 (require 'init-util)            ; utilities like match paren, bookmarks...
 (require 'init-ido)             ; supercharged completion engine
 (require 'init-highlight)       ; highlighting current line, symbol under point
-(when exordium-auto-complete
-  (require 'init-autocomplete)) ; auto-completion (see below for RTags AC)
+(cond ((eq exordium-complete-mode :auto-complete)
+       (require 'init-autocomplete)) ; auto-completion (see below for RTags AC)
+      ((eq exordium-complete-mode :company)
+       (require 'init-company))) ; company mode (rtags are on by default)
 (when exordium-helm-projectile  ; find files anywhere in project
   (require 'init-helm-projectile))
 (require 'init-helm)            ; setup helm
