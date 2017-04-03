@@ -126,7 +126,7 @@
 (require 'init-lib)
 (require 'init-prefs)
 (require 'rtags)
-(require 'rtags-ac)
+(require 'ac-rtags)
 (require 'auto-complete-c-headers)
 (require 'projectile)
 
