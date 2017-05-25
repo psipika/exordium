@@ -352,6 +352,9 @@ the .elc exists. Also discard .elc without corresponding .el"
 (when exordium-clojure
   (require 'init-clojure))
 
+;;; include-what-you-use
+(require 'init-iwyu)
+
 (update-progress-bar)
 
 ;;; Local extensions
