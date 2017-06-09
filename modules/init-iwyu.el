@@ -6,8 +6,27 @@
 ;;; ---------- ----------------------------------------------------------------
 ;;; C-c w e    `iwyu-reparse'
 ;;; C-c w d    `iwyu-show-diagnostics-buffer'
+;;; g          `iwyu-start-process-for' (in `IWYU-mode' buffer)
 
 (require 'cl)
+(require 'compile)
+
+;;;###autoload
+(define-derived-mode iwyu-mode compilation-mode "IWYU mode"
+  "IWYU is a mode to display include what you use results. Use `g' to reparse
+recent file (similar to `recompile' in `compilation-mode')."
+  (font-lock-add-keywords
+   nil
+   `((,(concat "^\\(\- \\)?\\(#include\\) "
+               "\\(\"[-[:alnum:]_\\.\/]+\"\\|<[-[:alnum:]_\\.\/]+>\\) +"
+               "\\(//.*\\)$")
+      (2 font-lock-preprocessor-face)
+      (3 font-lock-string-face)
+      (4 font-lock-comment-face))
+     (,(concat "\\(^\\|\\(for \\)\\)\\(\\(/[-[:alnum:]_\\.]+\\)+\\."
+               (regexp-opt '("h" "hh" "hpp" "c" "ccc" "cpp"))
+               "\\)")
+      (3 font-lock-function-name-face)))))
 
 (defun iwyu-show-diagnostics-buffer ()
   "Show/hide the diagnostics buffer in a dedicated
@@ -56,7 +75,7 @@ sequences of arguments are returned as single element."
                          (if start (+ start 1) (- (cl-list-length args) 1)))))
     args))
 
-(defun iwyu-start-process-for (compile-commands-json file)
+(defun iwyu-start-process-for (compile-commands-db file)
   "Start the `include-what-you-use' process and put its output into `*IWYU*'
 buffer. The buffer is cleared before starting the process. It search for the
 specified `file' inside the specified `compile-commands-json' compilation
@@ -69,7 +88,7 @@ arguments in `exordium-iwyu-extra-args'."
   (let* ((json-object-type 'plist)
          (json-array-type 'list)
          (compile-commands-json
-          (json-read-file compile-commands-json)))
+          (json-read-file compile-commands-db)))
     (catch 'found
       (dolist (entry compile-commands-json)
         (when (string-suffix-p file (plist-get entry :file))
@@ -81,7 +100,14 @@ arguments in `exordium-iwyu-extra-args'."
               (goto-char (point-min))
               (insert
                (format "include-what-you-use results for file %s:\n" file))
-              (read-only-mode))
+              (read-only-mode)
+              (iwyu-mode)
+              (substitute-key-definition
+               'recompile
+               `(lambda ()
+                  (interactive)
+                  (iwyu-start-process-for ',compile-commands-db ',file))
+                (current-local-map)))
             (apply
              'start-process
              "iwyu-process"
