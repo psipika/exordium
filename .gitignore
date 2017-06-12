@@ -6,7 +6,7 @@ init-local-prefs.el
 # New names:
 before-init.el
 after-init.el
-local
+local/*.elc
 
 # Melpa packages
 elpa
@@ -26,6 +26,7 @@ eshell
 /url/
 ido.last
 recentf
+tramp
 \#recentf\#
 project-explorer-cache
 
