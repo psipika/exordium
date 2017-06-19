@@ -50,9 +50,10 @@
 (global-set-key [(control c)(x)] 'graphviz-dot-preview)
 
 ;; Set the default theme, only if graphical.
-(if (display-graphic-p)
-    (setq exordium-theme 'material)
-  (setq exordium-theme 'tsdh-dark))
+;;(if (display-graphic-p)
+;;    (setq exordium-theme 'material)
+;;  (setq exordium-theme 'tsdh-dark))
+(setq exordium-theme 'tsdh-dark)
 
 ;; Disable ad-handle-definition warnings.
 (setq ad-redefinition-action 'accept)
