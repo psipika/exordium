@@ -135,6 +135,18 @@
 
 (eval-when-compile (defvar c-syntactic-context))
 
+(defun bde-is-member-function-declaration ()
+  "Return whether the line ending resembles the member function declaration."
+  (re-search-forward
+   (concat ") *\\(const\\)?"
+           " *\\(noexcept\\|BSLS_CPP11_NOEXCEPT\\)?"
+           " *\\(\\(= *\\(0\\|de\\(fault\\|lete\\)\\)\\)"
+           "\\|BSLS_CPP11_DE\\(FAULT\\|LETED\\)"
+           "\\|override\\|BSLS_CPP11_OVERRIDE\\)?"
+           " *\\(&\\(&\\)?\\)?"
+           " *; *$")
+           (point-at-eol) t))
+
 (defun bde-comment-offset (element)
   "Custom line-up function for BDE comments.
 Return a symbol for the correct indentation level at the
@@ -165,8 +177,7 @@ current cursor position, if the cursor is within a class definition:
                  ;; looking at a comment line
                  (setq comment-column (- (current-column) 2))
                  (forward-line -1))
-                ((re-search-forward ") *\\(const\\)? *\\(= *0\\)? *; *$"
-                                    (point-at-eol) t)
+                ((bde-is-member-function-declaration)
                  ;; looking at end of method declaration
                  (return '+))
                 ((re-search-forward "} *$" (point-at-eol) t)
@@ -311,13 +322,22 @@ switch(val) {
          (setq erase-hint nil))))))
 
 (defun bde-guess-class-name ()
-  "Return the name of the class or struct that is defined
-immediately after the cursor (skipping any previous spaces and
-newlines). Return nil if there isn't any struct or class defined."
+  "Return the name of the class or struct that is defined immediately after the
+cursor (skipping any previous templates, spaces, and newlines). Return nil if
+there isn't any struct or class defined."
   (save-excursion
     (beginning-of-line)
     (when (forward-word)
       (backward-word)
+      (when (re-search-forward "^template *<" (point-at-eol) t)
+        (let ((level 1))
+          (while (> level 0)
+            (if (re-search-forward "\\(<\\|>\\)" nil t)
+                (if (string= (match-string 1) "<")
+                    (setq level (+ level 1))
+                  (setq level (- level 1)))
+              (setq level 0))))
+        (forward-line))
       (when (re-search-forward "^\\(class\\|struct\\) " (point-at-eol) t)
         (concat (match-string 1) " " (current-word))))))
 
@@ -355,7 +375,7 @@ backspace, delete, left or right."
 
 ;;; BDE's right style comments such as // RETURN or // LOCK
 
-(defun bde-aligh-right ()
+(defun bde-align-right ()
   "Set the right amount of spaces around the point so the text
   after point is right-aligned (for things such as // RETURN). It
   works even if point is in a C++ comment."
@@ -380,7 +400,7 @@ backspace, delete, left or right."
   (move-end-of-line nil))
 
 ;;; Ctrl-> to right-aligh the text after point
-(global-set-key [(control >)] 'bde-aligh-right)
+(global-set-key [(control >)] 'bde-align-right)
 
 
 ;;; Insert redundant include guards
