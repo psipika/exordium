@@ -33,7 +33,9 @@
 ;;;     #endif
 ;;;
 ;;; `bde-align-fundecl': align function signature
-;;; Before (cursor must be inside the argument list):
+;;; Before (cursor must be somewhere in the function declaration, but it
+;;;         sometimes doesn't work well if cursor is after the parenthesis
+;;;         closing the argument list):
 ;;;    Customer(const BloombergLP::bslstl::StringRef& firstName,
 ;;;             const BloombergLP::bslstl::StringRef& lastName,
 ;;;             const bsl::vector<int>& accounts,
@@ -45,7 +47,6 @@
 ;;;             const bsl::vector<int>&                accounts,
 ;;;             int                                    id,
 ;;;             BloombergLP::bslma::Allocator         *basicAllocator = 0);
-;;; TODO: apparently default values should be aligned too.
 ;;;
 ;;; `bde-align-funcall': align function call arguments
 ;;; Before (cursor must be inside the argument list):
@@ -85,7 +86,13 @@
 (require 'init-lib)
 
 
-;;; Utility functions
+;;; Utility functions and constants
+
+(defconst exordium-bde-search-max-bound (* 80 25))
+;;   "Maximum point to search when searching for some regexp/string. Often
+;; the search is bound to the same line, however sometimes functionality needs to
+;; account for multi-line definitions. In here we assume 80 (columns) * 25 (lines)
+;; is enough for everyone.")
 
 (defun bde-component-name ()
   "Return the name of the component for the current buffer"
@@ -330,12 +337,13 @@ there isn't any struct or class defined."
     (when (forward-word)
       (backward-word)
       (when (re-search-forward "^template *<" (point-at-eol) t)
-        (let ((level 1))
+        (let ((level 1)
+              (bound (+ (point) exordium-bde-search-max-bound)))
           (while (> level 0)
-            (if (re-search-forward "\\(<\\|>\\)" nil t)
+            (if (re-search-forward "\\(<\\|>\\)" bound t)
                 (if (string= (match-string 1) "<")
-                    (setq level (+ level 1))
-                  (setq level (- level 1)))
+                    (incf level)
+                  (decf level))
               (setq level 0))))
         (forward-line))
       (when (re-search-forward "^\\(class\\|struct\\) " (point-at-eol) t)
@@ -479,45 +487,49 @@ will be used instead of the currently selected region."
 
 (defun exordium-bde-arglist-at-point--open-paren-position
     (from &optional beginning-of-line)
-  "Return the position of the first function arguments list opening
-parenthesis after the specified `from'. When `beginning-of-line' is specified
-it starts search in the beginning of the line rather than from the `from'
-point. Return `nil' when no qualifying parenthesis has been found."
+  "Return the position of the first function arguments list opening parenthesis
+after the specified `from'. When `beginning-of-line' is specified it starts
+search in the beginning of the line rather than from the `from' point.
+Return `nil' when no qualifying parenthesis has been found within the first
+80 (columns) * 25 (rows) characters."
   (when from
     (save-excursion
       (if beginning-of-line
           (move-beginning-of-line nil)
         (goto-char from))
-      (let ((level 0))
+      (let ((level 0)
+            (bound (+ (point) exordium-bde-search-max-bound)))
         (catch 'pos
           (while (re-search-forward (concat "\\(\\(<\\)\\|"  ;; 2: <
                                             "\\(>\\)\\|"     ;; 3: >
                                             "\\((\\)\\)")    ;; 4: (
-                                    nil t)
+                                    bound t)
             (cond ((match-string 2)
-                   (setq level (+ level 1)))
+                   (incf level))
                   ((match-string 3)
-                   (setq level (- level 1)))
+                   (decf level))
                   ((and (eq level 0) (match-string 4))
                    (throw 'pos (- (point) 1))))))))))
 
 (defun exordium-bde-arglist-at-point--close-paren-position (from)
   "Return the position of the function argument list closing parenthesis. The
 search starts from the `from' position and ends when semicolon, `inline-open',
-`defun-open', or `noexcept' has been encountered. Return `nil' when no
-qualifying parenthesis has been found."
+`defun-open', or `noexcept' has been encountered.
+Return `nil' when no qualifying parenthesis has been found withing the first
+80 (columns) * 25 (lines) characters."
   (when from
     (save-excursion
       (goto-char from)
       (let ((any-of-is-car-of #'(lambda (any-of elem-list)
                                   (cl-member (car elem-list) any-of)))
+            (bound (+ from exordium-bde-search-max-bound))
             (candidate nil))
         (catch 'pos
           (while (re-search-forward (concat "\\(\\()\\)\\|"      ;; 2: )
                                             "\\({\\)\\|"         ;; 3: {
                                             "\\(;\\|noexcept\\|" ;; 4: ; noexcept
                                             "BSLS_CPP11_NOEXCEPT\\)\\)") ;; 4...
-                                    nil t)
+                                    bound t)
             (cond ((match-string 2)
                    (setq candidate (point)))
                   ((match-string 3)
@@ -558,16 +570,16 @@ argument list has been found."
                   t)
                  ;; the `arglist-cont' has only the `arglist-intro' position
                  ;; one extra jump is needed before an extraction
-                 (funcall '(lambda (pos)
-                             (when pos
-                               (save-excursion
-                                 (goto-char pos)
-                                 (nth 2
-                                      (car (cl-member '(arglist-intro
-                                                        arglist-cont-nonempty
-                                                        arglist-close)
-                                                      (c-guess-basic-syntax)
-                                                      :test any-of-is-car-of))))))
+                 (funcall #'(lambda (pos)
+                              (when pos
+                                (save-excursion
+                                  (goto-char pos)
+                                  (nth 2
+                                       (car (cl-member '(arglist-intro
+                                                         arglist-cont-nonempty
+                                                         arglist-close)
+                                                       (c-guess-basic-syntax)
+                                                       :test any-of-is-car-of))))))
                           (nth 1
                                (car (cl-member '(arglist-cont)
                                                basic-syntax
@@ -603,9 +615,9 @@ It skips templates, function calls, and unified instantiations."
               (cond ((and (eq level 0) (match-string 2 arglist))
                      (throw 'end-arg-pos pos))
                     ((match-string 3 arglist)
-                     (setq level (+ level 1)))
+                     (incf level))
                     ((match-string 4 arglist)
-                     (setq level (- level 1))))
+                     (decf level)))
               (setq pos (match-end 0)))
           (throw 'end-arg-pos to))))))
 
@@ -687,21 +699,25 @@ according to the BDE style."
   (let ((args (exordium-bde-split-arglist (thing-at-point 'arglist t)))
         (parsed-args ())
         (max-type-length 0)
-        (max-stars 0))
+        (max-stars 0)
+        (max-var-length 0))
     (when args
       ;; Parse each argument and get the max type length
       (setq parsed-args
-            (mapcar '(lambda (arg)
-                       (let ((parsed-arg (bde-parse-argument arg)))
-                         (setq max-type-length (max max-type-length
-                                                    (length (car parsed-arg)))
-                               max-stars (max max-stars
-                                              (caddr parsed-arg)))
-                         parsed-arg))
+            (mapcar #'(lambda (arg)
+                        (let ((parsed-arg (bde-parse-argument arg)))
+                          (setq max-type-length (max max-type-length
+                                                     (length (car parsed-arg)))
+                                max-stars (max max-stars
+                                               (caddr parsed-arg))
+                                max-var-length (max max-var-length
+                                                    (- (length (cadr parsed-arg))
+                                                       (caddr parsed-arg))))
+                          parsed-arg))
                     args))
-      (funcall '(lambda (bounds)
-                  (goto-char (car bounds))
-                  (delete-region (car bounds) (cdr bounds)))
+      (funcall #'(lambda (bounds)
+                   (goto-char (car bounds))
+                   (delete-region (car bounds) (cdr bounds)))
                (bounds-of-thing-at-point 'arglist))
       (insert
        (with-temp-buffer
@@ -721,7 +737,11 @@ according to the BDE style."
                                       ?\s)))
                (insert var)
                (when assign
-                 (insert " " assign)))
+                 (insert (make-string (+ (- max-var-length
+                                            (- (length var) num-stars))
+                                         1) ; at least one space
+                                      ?\s))
+                 (insert assign)))
              (unless (>= i (length parsed-args))
                (insert ",")
                (newline))
@@ -731,8 +751,8 @@ according to the BDE style."
       ;; Reindent
       (save-restriction
         (widen)
-        (funcall '(lambda (bounds)
-                    (indent-region (car bounds) (cdr bounds)))
+        (funcall #'(lambda (bounds)
+                     (indent-region (car bounds) (cdr bounds)))
                  (bounds-of-thing-at-point 'arglist)))
 
       ;; If some lines exceed the dreadful 79th column, insert a new line before
@@ -740,9 +760,9 @@ according to the BDE style."
       (save-excursion
         (let* ((bounds (bounds-of-thing-at-point 'arglist))
                (start-col 0)
-               (max-col (funcall '(lambda (bounds)
-                                    (bde-max-column-in-region (car bounds)
-                                                              (cdr bounds)))
+               (max-col (funcall #'(lambda (bounds)
+                                     (bde-max-column-in-region (car bounds)
+                                                               (cdr bounds)))
                                  bounds)))
           (when (> max-col 79)
             (goto-char (car bounds))
@@ -751,14 +771,14 @@ according to the BDE style."
             (newline)
             (let ((longest-length (- max-col start-col)))
               (if (<= longest-length 79)
-                  (funcall '(lambda (bounds)
-                              (indent-region (car bounds)
-                                             (cdr bounds)
-                                             (- 79 longest-length)))
+                  (funcall #'(lambda (bounds)
+                               (indent-region (car bounds)
+                                              (cdr bounds)
+                                              (- 79 longest-length)))
                            (bounds-of-thing-at-point 'arglist))
                 ;; We cannot indent correctly, some lines are too long
-                (funcall '(lambda (bounds)
-                            (indent-region (car bounds) (cdr bounds)))
+                (funcall #'(lambda (bounds)
+                             (indent-region (car bounds) (cdr bounds)))
                          (bounds-of-thing-at-point 'arglist))
                 (message "Longest line is %d chars" longest-length))))))
       ;; Leave the cursor after the closing parenthese instead of on the opening
