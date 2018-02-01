@@ -27,7 +27,8 @@
 
 ;; Use atomic-chrome extension
 (require 'atomic-chrome)
-(atomic-chrome-server-start)
+(ignore-errors
+    (atomic-chrome-server-start))
 
 ;; Use C-F12 to enable linum-mode.
 (global-set-key [(control f12)] 'linum-mode)
