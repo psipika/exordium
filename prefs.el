@@ -25,6 +25,10 @@
 ;; Enable exordium's cmake support for rtags.
 (setq exordium-rtags-cmake t)
 
+;; Use atomic-chrome extension
+(require 'atomic-chrome)
+(atomic-chrome-server-start)
+
 ;; Use C-F12 to enable linum-mode.
 (global-set-key [(control f12)] 'linum-mode)
 
