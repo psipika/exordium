@@ -30,8 +30,9 @@
 (ignore-errors
     (atomic-chrome-server-start))
 
-;; Use C-F12 to enable linum-mode.
-(global-set-key [(control f12)] 'linum-mode)
+;; Use C-F12 to enable nlinum-mode and F12 for linum-mode
+(global-set-key [(control f12)] 'exordium-global-nlinum-mode)
+(global-set-key [(f12)] 'global-linum-mode)
 
 ;; Man page lookup on F1
 (global-set-key [(f1)] (lambda () (interactive) (manual-entry (current-word))))
