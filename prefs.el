@@ -25,9 +25,6 @@
 ;; Enable exordium's cmake support for rtags.
 (setq exordium-rtags-cmake t)
 
-;; Disable yasnippet by default
-(setq exordium-yasnippet nil)
-
 ;; Use atomic-chrome extension
 (require 'atomic-chrome)
 (ignore-errors
