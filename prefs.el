@@ -78,8 +78,8 @@
 ;; Default configuration for daemon and client
 (setq exordium-preferred-frame-width 90
       exordium-preferred-frame-height 70)
-(setq exordium-preferred-fonts '(("DejaVu Sans Mono" . 120)
-                                 ("Droid Sans Mono"  . 120)
+(setq exordium-preferred-fonts '(("Droid Sans Mono"  . 120)
+                                 ("DejaVu Sans Mono" . 120)
                                  ("Monospace"        . 120)
                                  ("Inconsolata"      . 140)
                                  ("Mono"             . 120)))
