@@ -52,3 +52,7 @@ tramp
 
 # Default custom file
 emacs-custom.el
+
+# forge database and stuff inside transient
+forge-database.sqlite
+transient/*
