@@ -56,8 +56,10 @@
 (global-set-key [(control c)(x)] 'graphviz-dot-preview)
 
 ;; Set the default theme, only if graphical.
+;; used to be 'material
+;; 'tomorrow-day, tsdh-light is cool, too
 (if (display-graphic-p)
-    (setq exordium-theme 'material)
+    (setq exordium-theme 'tomorrow-day)
   (setq exordium-theme 'tsdh-dark))
 ;;(setq exordium-theme 'tsdh-dark)
 
@@ -78,11 +80,11 @@
 ;; Default configuration for daemon and client
 (setq exordium-preferred-frame-width 90
       exordium-preferred-frame-height 70)
-(setq exordium-preferred-fonts '(("Droid Sans Mono"  . 120)
-                                 ("DejaVu Sans Mono" . 120)
-                                 ("Monospace"        . 120)
+(setq exordium-preferred-fonts '(("Droid Sans Mono"  . 130)
+                                 ("DejaVu Sans Mono" . 130)
+                                 ("Monospace"        . 130)
                                  ("Inconsolata"      . 140)
-                                 ("Mono"             . 120)))
+                                 ("Mono"             . 130)))
 
 ;; Daemon - Client config
 (cond ((daemonp)
