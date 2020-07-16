@@ -80,11 +80,11 @@
 ;; Default configuration for daemon and client
 (setq exordium-preferred-frame-width 90
       exordium-preferred-frame-height 70)
-(setq exordium-preferred-fonts '(("Droid Sans Mono"  . 130)
-                                 ("DejaVu Sans Mono" . 130)
-                                 ("Monospace"        . 130)
+(setq exordium-preferred-fonts '(("Droid Sans Mono"  . 140)
+                                 ("DejaVu Sans Mono" . 140)
+                                 ("Monospace"        . 140)
                                  ("Inconsolata"      . 140)
-                                 ("Mono"             . 130)))
+                                 ("Mono"             . 140)))
 
 ;; Daemon - Client config
 (cond ((daemonp)
