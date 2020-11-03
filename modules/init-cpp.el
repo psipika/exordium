@@ -20,10 +20,11 @@
 
 
 ;;; IEdit: rename the symbol under point
-;;; Fix A bug (normal key is "C-;")
 (use-package iedit
   :init
-  (define-key global-map (kbd "C-c ;") 'iedit-mode))
+  ;;; Fix A bug (normal key is "C-;")
+  :bind (:map global-map
+              ("C-c ;" . #'iedit-mode)))
 
 ;;; Don't show the abbrev minor mode in the mode line
 (diminish 'abbrev-mode)
@@ -154,12 +155,12 @@
 (use-package cl-lib :ensure nil)
 
 (defconst exordium-extra-c++-keywords
-  (remove-if #'null
-             (list
-              ;; This can be completed with other things later (C++17?)
-              (when (eq exordium-enable-c++11-keywords :simple)
-                '("\\<\\(alignas\\|alignof\\|char16_t\\|char32_t\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face))))
-  "A-list of pairs (regex . face) for highlighting extra keywords in C++ mode")
+  (cl-remove-if #'null
+                (list
+                 ;; This can be completed with other things later (C++17?)
+                 (when (eq exordium-enable-c++11-keywords :simple)
+                   '("\\<\\(alignas\\|alignof\\|char16_t\\|char32_t\\|constexpr\\|decltype\\|noexcept\\|nullptr\\|static_assert\\|thread_local\\|override\\|final\\)\\>" . font-lock-keyword-face))))
+  "A-list of pairs (regex . face) for highlighting extra keywords in C++ mode.")
 
 (when exordium-extra-c++-keywords
   (add-hook 'c++-mode-hook
