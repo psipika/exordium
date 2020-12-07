@@ -47,5 +47,8 @@
                              assert
                              activebase)))
 
+(setq indent-tab-mode nil)
+(setq tab-width 2)
+
 
 (provide 'init-javascript)
