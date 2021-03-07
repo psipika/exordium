@@ -325,11 +325,15 @@ the .elc exists. Also discard .elc without corresponding .el"
   :if exordium-helm-projectile)
 (use-package init-helm :ensure nil)            ; setup helm
 
+(use-package init-help :ensure nil
+  :if exordium-help-extensions)
+
 (update-progress-bar)
 
 (use-package init-dired :ensure nil)           ; enable dired+ and wdired permission editing
 (use-package init-git :ensure nil)             ; Magit and git gutter
 (use-package init-git-visit-diffs :ensure nil) ; visit diffs in successive narrowed buffers
+(use-package init-forge :ensure nil)           ; Forge
 (use-package init-flb-mode :ensure nil)        ; frame-local buffers
 
 (update-progress-bar)
