@@ -40,18 +40,3 @@
 ;; 'tomorrow-day, tsdh-light is cool, too
 (unless (display-graphic-p)
   (setq exordium-theme 'tsdh-dark))
-
-;;
-;; Append to the extra package list packages I will use
-;;
-(append '((graphviz-dot-mode       . "melpa-pinned")
-          (company                 . "melpa-pinned")
-          (atomic-chrome           . "melpa-pinned")
-          (groovy-mode             . "melpa-pinned")
-          (forge                   . "melpa-pinned")
-          (tide                    . "melpa-pinned")
-          (jedi                    . "melpa-pinned")
-          (jinja2-mode             . "melpa-pinned")
-          (markdown-toc            . "melpa-pinned")
-          (dockerfile-mode         . "melpa-pinned"))
-        exordium-extra-packages)
