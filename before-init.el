@@ -12,5 +12,6 @@
                                  jedi
                                  jinja2-mode
                                  markdown-toc
-                                 tide)
+                                 tide
+                                 yaml-mode)
                                exordium-extra-packages))
