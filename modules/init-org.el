@@ -5,14 +5,7 @@
   :commands (org-mode)
   :mode (("\\.org\\'" . org-mode))
   :init
-  (use-package fill-column-indicator
-    :if (version< emacs-version "27")
-    :config
-    (add-hook 'org-src-mode-hook
-              (lambda ()
-                (turn-off-fci-mode))))
-
-    (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
+  (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
   :config
   (setq org-startup-truncated nil)
@@ -20,6 +13,7 @@
   (setq org-todo-keywords
         '((sequence "TODO" "WORK" "WAIT" "DONE")))
   (setq org-src-fontify-natively t)
+  (setq org-fontify-whole-heading-line t)
   (setq org-src-preserve-indentation t)
   (setq org-completion-use-ido t)
   (when exordium-enable-org-export

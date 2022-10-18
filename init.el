@@ -9,7 +9,7 @@
 ;; the startup time.
 (setq gc-cons-threshold 100000000)
 
-(let ((min-version "26.1"))
+(let ((min-version "27.1"))
   (when (version< emacs-version min-version)
     (error "This config requires at least Emacs %s, but you're running %s"
            min-version emacs-version)))
@@ -136,6 +136,8 @@ Check the warnings and messages buffers, or restart with --debug-init")
              (cons "melpa-pinned" exordium-pinned-melpa-package-repo) t)
 (add-to-list 'package-archives
              (cons "gnu" exordium-gnu-package-repo) t)
+
+(setq package-user-dir (concat "~/.emacs.d/elpa-" emacs-version))
 
 (package-initialize)
 
@@ -338,6 +340,12 @@ the .elc exists. Also discard .elc without corresponding .el"
 
 (use-package init-powerline :ensure nil
   :if (and exordium-theme exordium-enable-powerline))
+
+;; Docker
+(use-package init-docker :ensure nil)
+
+;;; LSP
+(use-package init-lsp :ensure nil :if exordium-lsp-mode-enable)
 
 (update-progress-bar)
 
