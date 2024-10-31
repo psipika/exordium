@@ -23,8 +23,7 @@
 (use-package iedit
   :init
   ;;; Fix A bug (normal key is "C-;")
-  :bind (:map global-map
-              ("C-c ;" . #'iedit-mode)))
+  :bind ("C-c ;" . #'iedit-mode))
 
 ;;; Don't show the abbrev minor mode in the mode line
 (diminish 'abbrev-mode)
@@ -50,6 +49,14 @@
 
 ;;; Highlight dead code between "#if 0" and "#endif"
 (add-hook 'c-mode-common-hook 'cpp-highlight-dead-code-hook)
+(when exordium-treesit-modes-enable
+  (progn
+    (add-hook 'c-ts-mode-hook #'(lambda () (run-hooks 'c-mode-common-hook)))
+    (add-hook 'c++-ts-mode-hook #'(lambda () (run-hooks 'c-mode-common-hook)))
+    (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+    (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+    (add-to-list 'major-mode-remap-alist
+                 '(c-or-c++-mode . c-or-c++-ts-mode))))
 
 
 ;;; Switch between .h <--> .cpp <--> t.cpp

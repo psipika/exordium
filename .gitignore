@@ -31,6 +31,8 @@ ido.last
 recentf
 project-explorer-cache
 network-security.data
+/tutorial/
+/.org-id-locations
 
 # Desktop State
 .emacs.desktop
@@ -56,3 +58,6 @@ emacs-custom.el
 # forge database and stuff inside transient
 forge-database.sqlite
 transient/*
+
+# request stash
+request/

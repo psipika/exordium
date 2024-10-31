@@ -59,14 +59,16 @@ Check the warnings and messages buffers, or restart with --debug-init")
 (setq custom-file exordium-custom-file)
 
 (defcustom exordium-extra-packages ()
-  "Additional packages to auto load from elpa repositories"
+  "A list of additional packages to auto load from elpa repositories."
     :group 'exordium
     :type  'list)
 
 (defcustom exordium-extra-pinned ()
-  "Additional packages locations to pin to"
+  "An alist of additional packages locations to pin to.
+
+Each element of the list is in the same form as in `package-pinned-packages'."
   :group 'exordium
-  :type  'list)
+  :type  'alist)
 
 ;; Taps definition of before and after files. These are loaded
 ;; after master 'before', 'after', and 'prefs' files
@@ -83,13 +85,13 @@ Check the warnings and messages buffers, or restart with --debug-init")
 (defconst exordium-tapped-after-init-files ()
   "all tapped after init files, including master")
 
-(defconst exordium-melpa-package-repo "http://melpa.org/packages/"
+(defconst exordium-melpa-package-repo "https://melpa.org/packages/"
   "URL for packages repository")
 
-(defconst exordium-pinned-melpa-package-repo "http://melpa.org/packages/"
+(defconst exordium-pinned-melpa-package-repo "https://melpa.org/packages/"
   "URL for pinned default packages. Set to stable melpa.org if you want stable")
 
-(defconst exordium-gnu-package-repo "http://elpa.gnu.org/packages/"
+(defconst exordium-gnu-package-repo "https://elpa.gnu.org/packages/"
   "URL for the GNU package repository")
 
 (when (file-accessible-directory-p exordium-taps-root)
@@ -128,16 +130,28 @@ Check the warnings and messages buffers, or restart with --debug-init")
 ;; then press I to mark for installation and X to execute (it's like dired).
 
 ;; Initialize the package system
+(require 'seq)
 (require 'package)
-
-(add-to-list 'package-archives
-             (cons "melpa" exordium-melpa-package-repo) t)
+(when (or (not (string= exordium-melpa-package-repo
+                        exordium-pinned-melpa-package-repo))
+          (seq-filter (lambda (pkg)
+                        (string= "melpa" (cdr pkg)))
+                      exordium-extra-pinned))
+  (add-to-list 'package-archives
+               (cons "melpa" exordium-melpa-package-repo) t))
 (add-to-list 'package-archives
              (cons "melpa-pinned" exordium-pinned-melpa-package-repo) t)
-(add-to-list 'package-archives
-             (cons "gnu" exordium-gnu-package-repo) t)
+(unless (seq-filter (lambda (repo)
+                      (string= exordium-gnu-package-repo (cdr repo)))
+                    package-archives)
+  (add-to-list 'package-archives
+               (cons "gnu" exordium-gnu-package-repo) t))
 
-(setq package-user-dir (concat "~/.emacs.d/elpa-" emacs-version))
+(setq package-user-dir
+      (locate-user-emacs-file (concat "elpa-" emacs-version)))
+
+(when (fboundp 'native-comp-available-p)
+ (setq package-native-compile (native-comp-available-p)))
 
 (package-initialize)
 
@@ -164,7 +178,18 @@ Check the warnings and messages buffers, or restart with --debug-init")
 
   (dolist (pkg exordium-extra-packages)
     (update-package pkg has-refreshed)))
-
+
+;; - Some packages (i.e., magit, forge) require seq-2.24.
+;; - Emacs-29.1 is delivered with seq-2.23.
+;; - Other packages (i.e., compat) require seq-2.23.
+;; - When only magit is installed it requires compat which requires seq-2.23 -> seq is not upgraded
+;; - When only forge is installed is requires magit and compat which requires seq-2.23 -> seq is not upgraded
+;; - When magit is installed followed by installation of forge seq is upgraded to seq-2.24 -> this fails
+;; Force installing the freshest version of seq with errors suppressed:
+(when (version< emacs-version "29.2")
+  (let (debug-on-error)
+    ;; this assumes `package-refresh-contents has been called'
+    (package-install (car (alist-get 'seq package-archive-contents)))))
 
 ;;; Path for "require"
 
@@ -183,6 +208,8 @@ Check the warnings and messages buffers, or restart with --debug-init")
 (add-directory-tree-to-load-path exordium-themes-dir)
 (add-directory-tree-to-load-path exordium-local-dir t)
 
+(add-directory-tree-to-load-path exordium-taps-root)
+
 (setq custom-theme-directory exordium-themes-dir)
 
 
@@ -196,6 +223,12 @@ Check the warnings and messages buffers, or restart with --debug-init")
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 (setq use-package-compute-statistics t)
+
+;;; remove a package from the builtin list so it can be upgraded
+(defun exordium-ignore-builtin (pkg)
+  (assq-delete-all pkg package--builtins)
+  (assq-delete-all pkg package--builtin-versions))
+
 
 ;;; Load Modules
 (use-package bytecomp :ensure nil)
@@ -236,10 +269,6 @@ the .elc exists. Also discard .elc without corresponding .el"
 (when exordium-nw
   (set-face-background 'highlight nil))
 (use-package init-themes :ensure nil :if exordium-theme)
-
-;;; Desktop
-(when exordium-desktop
-  (use-package init-desktop :ensure nil))
 
 ;;; Look and feel
 (use-package init-look-and-feel :ensure nil)   ; fonts, UI, keybindings, saving files etc.
@@ -334,9 +363,9 @@ the .elc exists. Also discard .elc without corresponding .el"
 
 (update-progress-bar)
 
-;;; Local extensions
-(dolist (tapped-file exordium-tapped-after-init-files)
-  (load tapped-file))
+;;; Desktop - close to the end so customisations had a chance to kick in
+(when exordium-desktop
+  (use-package init-desktop :ensure nil))
 
 (use-package init-powerline :ensure nil
   :if (and exordium-theme exordium-enable-powerline))
@@ -344,8 +373,18 @@ the .elc exists. Also discard .elc without corresponding .el"
 ;; Docker
 (use-package init-docker :ensure nil)
 
+;; Flycheck
+(use-package init-flycheck :ensure nil)
+
+;;; Treesit
+(use-package init-treesit :ensure nil)
+
 ;;; LSP
 (use-package init-lsp :ensure nil :if exordium-lsp-mode-enable)
+
+;;; Local extensions
+(dolist (tapped-file exordium-tapped-after-init-files)
+  (load tapped-file))
 
 (update-progress-bar)
 

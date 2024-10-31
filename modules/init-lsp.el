@@ -5,10 +5,6 @@
 ;;; Code:
 (require 'init-prefs)
 
-(use-package flycheck
-  :commands flycheck-mode
-  :init (global-flycheck-mode))
-
 (use-package flycheck-pos-tip
   :after flycheck
   :defines flycheck-pos-tip-timeout
@@ -20,7 +16,9 @@
 
 (use-package lsp-mode
   :if exordium-lsp-mode-enable
-  :hook ((c-mode-common  . lsp))
+  :hook ((c-mode-common  . lsp)
+         (c++-ts-mode  . lsp)
+         (c-ts-mode  . lsp))
   :init
   (setq-default lsp-clients-clangd-executable
                 (seq-find #'executable-find exordium-lsp-clangd-executable))
