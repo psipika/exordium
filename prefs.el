@@ -1,13 +1,13 @@
 ;; Mac OS X doesn't do 60 for frame height, let's try 50.
 (cond ((eq system-type 'darwin)
        (progn (setq exordium-preferred-frame-height 50)
-              (setq exordium-preferred-fonts '(("Droid Sans Mono"  . 140)
-                                               ("DejaVu Sans Mono" . 140)
+              (setq exordium-preferred-fonts '(("DejaVu Sans Mono" . 140)
+                                               ("Droid Sans Mono"  . 140)
                                                ("Monospace"        . 140)
                                                ("Inconsolata"      . 140)
                                                ("Mono"             . 140)))
               (when (display-graphic-p)
-		(setq exordium-theme 'tomorrow-day))))
+		(setq exordium-theme 'solarized-dark))))
       ((eq system-type 'windows-nt)
        (progn (setq exordium-preferred-frame-width 90
 		    exordium-preferred-frame-height 30)
@@ -51,3 +51,7 @@
 ;; 'tomorrow-day, tsdh-light is cool, too
 (unless (display-graphic-p)
   (setq exordium-theme 'tsdh-dark))
+
+;; Set C/C++ indent to be two spaces and leave curly braces alone
+(setq c-default-style "linux"
+      c-basic-offset 2)
