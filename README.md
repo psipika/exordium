@@ -26,7 +26,7 @@ might want to check these links:
 * C++
   * [Utilities](#utilities)
   * [Snippets](#snippets)
-  * [RTags](#rtags)
+  * [Include What You Use](#include-what-you-use)
 * [Lisp](#lisp)
 * [Markdown](#markdown)
 * [LSP](#lsp)
@@ -48,17 +48,17 @@ might want to check these links:
   [Avy](https://github.com/abo-abo/avy) (jump to visible text in 2 or 3 key-strokes);
   [ace-window](https://github.com/abo-abo/ace-window) (quick jump between windows);
   [helpful](https://github.com/Wilfred/helpful) (a better Emacs *help* buffer);
-  [which-key](https://github.com/justbur/emacs-which-key) (display available keybindings).
-  [Treesitter]()(Parser-based font lock.)
+  [casual](https://github.com/kickingvegas/casual) (A collection of opinionated
+  keyboard-driven user interfaces for various built-in Emacs modes);
+  [which-key](https://github.com/justbur/emacs-which-key) (display available keybindings);
+  [Treesitter]()(Parser-based font lock).
 * Projects: [Projectile](http://batsov.com/projectile) (project-based file
   management tool).
 * Git: [Magit](http://magit.vc) (git UI);
   [Forge](https://magit.vc/manual/forge/) (work with Git forges);
-  [Git Gutter](https://github.com/syohex/emacs-git-gutter) (diffs in buffer).
+  [Git Gutter](https://github.com/syohex/emacs-git-gutter) (diffs in buffer);
+  [difftastic](https://github.com/pkryger/difftastic.el) (structural diffs).
 * C++:
-  * [RTags](https://github.com/Andersbakken/rtags): a LLVM/Clang-based code
-    indexer providing goto definition, find references, refactoring,
-    compilation errors in buffer, auto-complete etc.
   * Formatting keys and snippets for the
     [BDE](https://github.com/bloomberg/bde) code style.
   * [include-what-you-use](https://include-what-you-use.org): a LLVM/Clang-based
@@ -103,6 +103,11 @@ Github and recompiles everything. Restart Emacs after that.
 Melpa packages are not updated automatically: you can do it with <kbd>M-x
 package-list-packages</kbd>, then <kbd>U</kbd> then <kbd>x</kbd>.
 
+Exordium tries to automatically refresh ELPAs package contents to when it may
+be necessary. You can force or inhibit such a refresh by starting Emacs with
+command line argument `--exordium-force-package-refresh-contents` or
+`--exordium-inhibit-package-refresh-contents` respectively.
+
 ### Files
 
 The main file is `init.el`: it load the modules from the `modules` subdirectory
@@ -124,6 +129,8 @@ See the [Customization](#customization) section below for more details.
 
 ## Keymap
 
+Exordium uses `bind-key` to set up key bindings, which keeps track of all bindings made. You can display a comprehensive list using <kbd>M-x describe-personal-keybindings</kbd>.
+
 General:
 
 Keybinding           | Description
@@ -135,24 +142,24 @@ Keybinding           | Description
 <kbd>C-+</kbd>       | Increase font size (`text-scale-increase`).
 <kbd>C--</kbd>       | Decrease font size (`text-scale-decrease`).
 <kbd>M-C-l</kbd>     | Switch back and forth between the 2 top buffers (from XEmacs).
-<kbd>C-c C-SPC</kbd> | Toggle highlight of the symbol under the cursor (up to 4 different symbols using different colors).
+<kbd>C-c C-SPC</kbd> | Toggle highlight of the symbol under the cursor (by default, up to 8 different symbols using different colors).
 
 Editing:
 
-Keybinding          | Description
---------------------|----------------------------------------------------------
-<kbd>RETURN</kbd>   | Return and indent by default; use <kbd>S-RETURN</kbd> for just return.
-<kbd>M-BCKSP</kbd>  | `backward-kill-word` (e.g. the opposite of <kbd>M-d</kbd> `kill-word`).
-<kbd>C-\\</kbd>     | Delete spaces after cursor (`delete-horizontal-space-forward`).
-<kbd>C-BCKSP</kbd>  | Delete spaces before cursor (`delete-horizontal-space-backward`).
-<kbd>M-\\</kbd>     | Delete all spaces around cursor.
-<kbd>M-LEFT</kbd> and <kbd>M-RIGHT</kbd> | Move cursor by semantic units (use <kbd>C-LEFT</kbd> and <kbd>C-RIGHT</kbd> to move by words).
-<kbd>C-c d</kbd>    | Duplicate line.
-<kbd>C-=</kbd>      | Expand region by semantic units.
-<kbd>M-C-=</kbd>    | Contract region by semantic units.
-<kbd>M-<up></kbd>   | Move region one line up
-<kbd>M-<down></kbd> | Move region one line down
-<kbd>C-&#124;</kbd> | Toggle the 80-column ruler (fill column indicator).
+Keybinding                | Description
+--------------------------|----------------------------------------------------------
+<kbd>RET</kbd>            | Return and indent by default; use <kbd>S-RET</kbd> for just return.
+<kbd>M-<backspace></kbd>  | `backward-kill-word` (e.g. the opposite of <kbd>M-d</kbd> `kill-word`).
+<kbd>C-\\</kbd>           | Delete spaces after cursor (`delete-horizontal-space-forward`).
+<kbd>C-<backspace></kbd>  | Delete spaces before cursor (`delete-horizontal-space-backward`).
+<kbd>M-\\</kbd>           | Delete all spaces around cursor.
+<kbd>M-<left></kbd> and <kbd>M-<right></kbd> | Move cursor by semantic units (use <kbd>C-<left></kbd> and <kbd>C-<right></kbd> to move by words).
+<kbd>C-c d</kbd>          | Duplicate line.
+<kbd>C-=</kbd>            | Expand region by semantic units.
+<kbd>M-C-=</kbd>          | Contract region by semantic units.
+<kbd>M-<up></kbd>         | Move region one line up
+<kbd>M-<down></kbd>       | Move region one line down
+<kbd>C-&#124;</kbd>       | Toggle the 80-column ruler (fill column indicator).
 
 Navigation:
 
@@ -170,7 +177,7 @@ Keybinding              | Description
 ------------------------|----------------------------------------------------------
 <kbd>C-c ARROW</kbd>    | Move cursor between windows.
 <kbd>C-c S-ARROW</kbd>  | Move the windows themselves.
-<kbd>M-p NUMBER</kbd>   | Jump to the specified window number using [ace-window](https://github.com/abo-abo/ace-window). If you only have 2 windows, cycle between them.
+<kbd>M-o NUMBER</kbd>   | Jump to the specified window number using [ace-window](https://github.com/abo-abo/ace-window). If you only have 2 windows, cycle between them.
 
 Auto-complete/Company:
 
@@ -183,6 +190,46 @@ Tip: if you are looking for a particular key and you know it starts with a
 given prefix, type the prefix followed by <kbd>C-h</kbd>: Emacs will display
 the list of keys starting with that prefix. For example <kbd>C-c C-h</kbd> lists
 all the keys starting with <kbd>C-c</kbd>.
+
+Highlighted symbols:
+
+When a symbol has been highlighted using <kbd>C-C C-SPC</kbd>
+(`symbol-overlay-put`) and a point is placed on the highlighted symbol extra
+keymap is active that allows for example to navigate and edit withing context
+of the symbol.
+
+A few example bindings:
+
+Keybinding                       | Description
+-------------------------------- |----------------------------------------------------------
+<kbd>M-n</kbd>                   | Jump to next location of highlighted symbol at point.
+<kbd>M-p</kbd>                   | Jump to previous location of highlighted symbol at point.
+<kbd>M-h</kbd> or <kbd>C-o</kbd> | Display bindings for highlighted symbol at point.
+
+You can change the modifier key (default: <kbd>M</kbd>) by customizing `exordium-highlight-symbol-map-modifier`.
+
+## Help extensions
+Exordium provides a few help extensions that enhance default Emacs
+configuration presenting user with more information. All of them are enabled by
+setting `exordium-help-extensions` to t. Noteably, the following are turned on:
+
+- [which-key](https://github.com/justbur/emacs-which-key) - display available
+  keybindings after a short while (for example type <kbd>C-x</kbd> and wait a
+  second,
+- [casual](https://github.com/kickingvegas/casual) - a collection of
+  opinionated keyboard-driven user interfaces for various built-in Emacs modes,
+- [helpful](https://github.com/Wilfred/helpful) - an alternative to the
+  built-in Emacs help that provides much more contextual information.
+
+Keybinding          | Description
+------------------- |----------------------------------------------------------
+<kbd>C-o</kbd>      | Display a transient with bindings for a `casual` user of `org-agenda`, `bookmark`, `calc`, `calendar`, `dired`, `ibuffer`, `info`, `isearch`, `rebuilder`, `symbol-overlay` or a Casual EditKit menu.
+<kbd>C-h f</kbd>    | Show `helpful` buffer for function, macro, or a special form (`helpful-callable`).
+<kbd>C-h F</kbd>    | Show `helpful` buffer for function (`helpful-function`).
+<kbd>C-h v</kbd>    | Show `helpful` buffer for variable (`helpful-variable`).
+<kbd>C-h C</kbd>    | Show `helpful` buffer for interactive command (`helpful-command`).
+<kbd>C-c C-d</kbd>  | Show `helpful` buffer for thing at point, when in `emacs-lisp-mode` (`helpful-thing-at-point`).
+<kbd>C-j</kbd>      | Show `helpful` buffer for currently selected candidate, when completing read for `helpful` commands.
 
 ## Projectile
 
@@ -343,7 +390,7 @@ Treemacs displays the git status of files (added, modified, ignored etc.) using
 different faces.
 
 With the cursor in the Treemacs window, you can use <kbd>TAB</kbd> to
-open/close directories, <kbd>RETURN</kbd> to open a file, and <kbd>q</kbd> to
+open/close directories, <kbd>RET</kbd> to open a file, and <kbd>q</kbd> to
 quit. Use <kbd>?</kbd> to view all the available keys. See the documentation of
 Treemacs for details.
 
@@ -382,6 +429,23 @@ Keybinding            | Description
 <kbd>C-c g b</kbd>    | Toggles git blame mode on and off (`magit-blame-mode`).
 <kbd>C-c g c</kbd>    | Clone a repository (`magit-clone`).
 <kbd>C-c g g</kbd>    | Git grep (`vc-git-grep`) or (`helm-grep-do-git-grep`).
+
+To perform structural diffs you need to install an external tool
+[`difftastic`](https://difftastic.wilfred.me.uk) (see the web page for
+details).  Once `difftastic` has been installed, and you are in either
+`magit-diff` transient, or `magit-blame` transient, or in
+`magit-blame-read-only-mode`:
+
+Keybinding            | Description
+----------------------|-----------------------------------------------------------
+<kbd>D</kbd>          | Run Difftastic diff (guessing what to diff from context) (`difftastic-magit-diff`).
+<kbd>S</kbd>          | Run Difftastic show (`difftastic-magit-show`).
+
+or when you are in `dired-mode`:
+
+Keybinding            | Description
+----------------------|-----------------------------------------------------------
+<kbd>C-c =</kbd>      | Run Difftastic (`difftastic-dired-diff`).
 
 Forge keys:
 
@@ -440,7 +504,7 @@ Keybinding           | Description
 ---------------------|-----------------------------------------------------------
 <kbd>C-TAB</kbd>     | Alternate between header file and source file.
 <kbd>C-u C-TAB</kbd> | Alternate between source/header file and BDE test driver.
-<kbd>C-c ;</kbd>     | Rename variable under cursor (but see also RTags, which is a better solution).
+<kbd>C-c ;</kbd>     | Rename variable under cursor
 
 Keys for formatting code according to the
 [BDE](https://github.com/bloomberg/bde) style:
@@ -465,7 +529,7 @@ and auto-complete/company-complete. You can easily use a function key if you pre
 by adding this in your `after-init.el`:
 
 ```lisp
-(define-key yas-minor-mode-map (kbd "<f2>") 'yas-expand)
+(bind-key "<f2>" #'yas-expand yas-minor-mode-map)
 ```
 
 Snippets are stored in `~/.emacs.d/snippets/c++-mode`. Here are
@@ -474,331 +538,6 @@ Snippets are stored in `~/.emacs.d/snippets/c++-mode`. Here are
 Note that variable `*bde-component-author*` defines the default author for a
 header file template (see `modules/init-yasnippet.el`). You can set it to your
 name in `after-init.el`.
-
-### RTags
-
-[RTags](https://github.com/Andersbakken/rtags) is a LLVM-based C++ indexer
-which provides a daemon called "rdm" that maintains a persistent (memory
-mapped) file-based index. The client for "rdm" is command-line client called
-"rc". RTags uses a single index for all symbols, but it allows for loading and
-unloading projects individually.
-
-The rdm daemon knows how to compile your project with a CLang
-[compilation database](http://clang.llvm.org/docs/JSONCompilationDatabase.html),
-which is a file named `compile_commands.json`. The compilation database contains one
-entry for each file to compile, like the following (simplified for clarity):
-
-```
-{ "directory": "/home/phil/workspaces/foo/",
-  "command":   "/usr/bin/clang++
-                -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT
-                -I/home/phil/workspaces/bde/groups/bsl/bsl+stdhdrs
-                -I/home/phil/workspaces/bde/groups/bsl/bslma
-                -I/home/phil/workspaces/bde/groups/bsl/bsls
-                -c -o bar.o bar.cpp",
-   "file":      "bar.cpp" }
-```
-
-Basically the compilation database contains the list of files to compile and
-the exact command to compile them. There are several ways to generate this
-file:
-
-* RTags provides compiler wrapper scripts which tell rdm to parse and index
-  each compilation unit before it gets compiled. While this is the easiest way
-  (all you need to do is to build), the inconvenient is that you need to build
-  before you can use the latest index, and any unused header won't be indexed.
-* You can build with CMake: it generates a compilation database for you each
-  time you build.
-* Exordium provides a command to generate the compilation database by scanning
-  source directories. It requires you to write a simple text file indicating
-  where these source directories are.
-
-The first thing you need to do is to build and install RTags: refer to the
-RTags documentation. The sections below explain how to use it.
-
-#### Using RTags from the shell
-
-First start the daemon:
-
-```bash
-$ rdm
-```
-
-This will start the daemon on the foreground, using a number of concurrent "rp"
-jobs that is function of the number of CPUs on the local machine. By default it
-logs to the console but you can make it log to a file instead with `-L file` or
-make it silent with `-S`. There are many options; use `--help` to see the list.
-
-RTags stores project indices into a directory `~/.rtags` by default, and
-reloads them as needed. It watches for file changes using *inotify* and
-refreshes the index automatically. Note that you can change the location of the
-`.rtags` directory with a `~/.rdmrc` file; it is recommended to store it into a
-local SSD drive and avoid NFS-mounted directories.
-
-By default rc and rdm communicate with each other using a socket file `~/.rdm`,
-but there are other ways: refer to the RTags documentation.
-
-The main commands are:
-
-Command            | Description
--------------------|-----------------------------------------------------------
-`rc -w`            | List projects in the index.
-`rc -w proj`       | Switch to project "proj" (a regex).
-`rc -W proj`       | Unload and delete project "proj".
-`rc -J .`          | Reload the compilation DB from the current directory.
-`rc --find-project-root /path/to/sourcefile.cpp` | Print what it determines to be the correct project root.
-`rc -T sourcefile.cpp` | Say whether this file is indexed or not.
-`rc -q`            | Shutdown rdm.
-
-Note that a job may crash while trying to index a file. If it does, rdm will
-retry a few times and then give up with the file it cannot parse.
-
-#### Using RTags from Emacs
-
-Alternatively you can run rdm as an Emacs subprocess. The logs will go into a
-buffer (in color!).
-
-Command                    | Description
----------------------------|---------------------------------------------------
-<kbd>M-x rtags-start</kbd> | Start rdm and RTags diagnostics.
-<kbd>M-x rtags-stop</kbd>  | Stop rdm and Rtags diagnostics.
-
-#### CMake projects
-
-If your project compiles with CMake, you're in luck: CMake generates this
-compilation database for you every time you build. Adding this line in your
-`~/.emacs.d/prefs.el` will make RTags work automagically:
-
-```lisp
-(setq exordium-rtags-cmake t)
-```
-
-In addition you may set the following variables:
-
-* Exordium assumes that your build directory is named like `cmake.bld/<arch>`,
-  relative to the project root, where `<arch>` is the `uname` of your OS. If
-  this is not the case you can change it like so in `~/.emacs.d/prefs.el`:
-
-    ```lisp
-    (setq exordium-rtags-cmake-build-dir "build")
-    ```
-
-* Exordium runs rdm with no argument by default. You can add arguments by
-  setting this variable in `~/.emacs.d/prefs.el`:
-
-    ```lisp
-    (setq exordium-rtags-rdm-args
-          "--isystem /opt/bb/lib64/clang/3.6.2/include -DBAS_NOBBENV")
-    ```
-
-You can also specify where the build directory is using a `.rtags` file at the
-root of your project with a content like `build /path/to/my/build`; it takes
-precedence over `exordium-rtags-cmake-build-dir`.
-
-Exordium will automatically detect if your project is CMake-enabled when you
-open a C++ file, by looking for `CMakeLists.txt` files along the path from the
-root of your project to the location of the file you open (your project must be
-a git repo). If this is a CMake project, Exordium will start rdm if it is not
-running, and ask rdm to index the project using the CMake-generated compilation
-database in the build directory. If the project was already indexed, it is
-simply reloaded and RTags commands work immediately. Otherwise rdm compiles the
-index, and you can see the progress with <kbd>C-c r l</kbd> (rerun to dismiss).
-
-If you need to add or remove components from your project, just rebuild it
-(e.g. "make" in the build directory) and CMake will update the compilation
-database accordingly. Because rdm watches for changes to the compilation
-database file, it will pick up the changes automatically.
-
-#### Non-CMake projects
-
-You can generate the compilation database with the command
-<kbd>M-x rtags-create-compilation-database</kbd>. But before you do, it needs
-a little help: you need to tell it what `clang++` command to use to compile
-any file, with all the `-I` directives that are necessary for your project.
-
-The command uses a file `compile_includes` in the project root directory, which
-specifies how to generate `compilation_database.json` for your project. It is a
-simple text file indicating where are all the source files and all the include
-files. The "src" directives indicate where to find the source files to put in
-the index (each of them will have its own entry in the compilation
-database). The "include" directives indicate additional "-I" includes in the
-clang command line. Both are recursive: any path will be scanned for source
-files or subdirectories; however the "exclude" directives indicate what
-patterns (regex) to exclude when scanning the "src" and "include"
-paths. Finally the "excludesrc" directive is used to specify patterns (regex)
-of source files names to exclude.
-
-Note that all directives except "src" are optional. Also note that paths are
-either absolute or relative to the project root. Here is an example:
-
-```
-  # 'compile_includes' file for project foo
-
-  # Where are the source files (there could be multiple directories).
-  # We will scan recursively any subdirectories that do not match any
-  # 'exclude' regex.
-  src .
-
-  # What to put in -I directives (in addition to the source files above).
-  # We will scan recursively any subdirectories that do not match any
-  # 'exclude' regex.
-  include /Users/phil/Code/cpp/include/bsl
-  include /Users/phil/Code/cpp/include/bdl
-
-  # Optional: patterns to exclude in -I directives and while looking for
-  # sources. Here we explicitly don't want to index the tests subdir:
-  exclude /test$
-
-  # Optional: if any file name pattern must be excluded from the "src" files,
-  use the "excludesrc" directive. For example this will exclude all test
-  # drivers (extension .t.cpp):
-  excludesrc \.t\.cpp$
-
-  # Optional: -D macros, if any:
-  macro BDE_BUILD_TARGET_SAFE
-```
-
-In addition, the creation of a compilation database uses these variables:
-
-Variable                            | Description
-------------------------------------|------------------------------------------
-`rtags-compile-includes-base-dir  ` | Set this to your workspace path if you want to use relative paths in `compile_includes` that are not relative to the project's root directory (the default).
-`rtags-clang-command-prefix  `      | Default is "/usr/bin/clang++ -Irelative" (note that RTags ignores the clang++ command because it uses libclang).
-`rtags-clang-command-suffix  `      | Default is "-c -o".
-
-Once you have created the `compile_includes` file, run the command <kbd>M-x
-rtags-create-compilation-database</kbd>. It will:
-
-* Prompt for the project root dir;
-* Read the `compile_includes` file;
-* Scan all source dirs and include dirs according to what the file says;
-* Create `compilation_database.json` (note: it overwrites it without asking);
-* Ask if you want to reload it (if rdm is running as an Emacs subprocess).
-
-You can reload the compilation database manually with `rc`:
-
-```bash
-$ cd /where/your/compilation/db/is
-$ rc -J
-```
-
-Check the output of rdm for any compilation errors and adjust your compilation
-database accordingly.
-
-The rdm daemon should automatically re-compile any file you edit in Emacs as
-soon as you save it or otherwise touch it.
-
-#### Using the index
-
-While RTags uses <kbd>C-x r</kbd> as default prefix, this configuration uses
-<kbd>C-c r</kbd> instead because it it less crowded. It also adds a few keys
-such as <kbd>M-C-g</kbd> to display the list of symbols from the current buffer
-using Helm:
-
-![Rtags Helm](https://raw.github.com/emacs-exordium/exordium/master/doc/rtags_helm.png)
-
-Navigation keys:
-
-Keybinding                           | Description
--------------------------------------|-----------------------------------------
-<kbd>M-.</kbd> or <kbd>C-c r .</kbd> | Jump to symbol definition. With prefix: in other window.
-<kbd>M-,</kbd> or <kbd>C-c r ,</kbd> | Find references to symbol.
-<kbd>C-c r &gt;</kbd>                | Find symbol (prompts for symbol name).
-<kbd>C-c r &lt;</kbd>                | Find references (prompts for symbol name).
-<kbd>C-c r v</kbd>                   | Find all implementations of virtual function.
-<kbd>C-c r S</kbd>                   | Show symbol summary in tooltip (`rtags-display-summary`).
-<kbd>M-C-g</kbd>                     | Find symbol in file using Helm.
-<kbd>C-c r ;</kbd>                   | `rtags-find-file` using partial name (non IDO).
-
-Any navigation is recorded onto a stack, so it is easy to go back and forth:
-
-Keybinding                                   | Description
----------------------------------------------|---------------------------------
-<kbd>C-c r LEFT</kbd> or <kbd>C-c r [</kbd>  | Go back to previous location.
-<kbd>C-c r RIGHT</kbd> or <kbd>C-c r ]</kbd> | Go forward to next location.
-
-Refactoring:
-
-Keybinding         | Description
--------------------|-----------------------------------------------------------
-<kbd>C-c r R</kbd> | Rename symbol.
-
-Control:
-
-Keybinding         | Description
--------------------|-----------------------------------------------------------
-<kbd>C-c r p</kbd> | Switch project.
-<kbd>C-c r e</kbd> | Reparse file, e.g. recompile.
-
-Debugging utilities:
-
-Keybinding         | Description
--------------------|-----------------------------------------------------------
-<kbd>C-c r l</kbd> | Show/hide the rdm log buffer.
-<kbd>C-c r U</kbd> | Show what rdm knows about a symbol.
-<kbd>C-c r P</kbd> | Show all includes for the current file.
-<kbd>C-c r T</kbd> | Show the tag list for the current file.
-
-#### Using syntax checker
-
-"Rtags diagnostics" is a way to get compilation warnings and errors from rdm,
-and display them using Flymake or Flychek in buffers. Set the variable
-`exordium-rtags-syntax-checker` to `:flymake` (default) or to `:flycheck` to
-select the syntax-checker in use.
-
-The compilation warnings are  enabled by default if you run rdm from Emacs.
-Otherwise you can turn it on manually with `M-x rtags-diagnostics` bound
-to <kbd>C-c r D</kbd>.
-
-By default Powerline displays the name of the buffer in
-green if the project compiles and in red if there are errors:
-
-![RTags diagnostics](https://raw.github.com/emacs-exordium/exordium/master/doc/rtags_diagnostics.png)
-
-Click on the highlighted symbol in your code to view the error message. Click
-on the error line in the diagnostics buffer to jump to the error location.
-
-Keybinding            | Description
-----------------------|-----------------------------------------------------------
-<kbd>C-c r D</kbd>    | Run `rtags-diagnostics` if it wasn't and force reparsing of current buffer.
-<kbd>C-c r d</kbd>    | Show/hide the diagnostics buffer without force reparsing.
-<kbd>C-c r r</kbd>    | Run `helm-flycheck` to show errors in helm buffer (only with `:flycheck` syntax checker)
-<kbd>C-c r DOWN</kbd> | Goto next problem (`rtags-next-diag`).
-<kbd>C-c r UP</kbd>   | Goto previous problem.
-<kbd>C-c r F</kbd>    | Fix the error using Clang's "did you mean" (try it with "inft x;")
-<kbd>C-c r c</kbd>    | Clears all errors and warnings (`rtags-clear-diagnostics`)
-<kbd>C-c r Q</kbd>    | `rtags-stop-diagnostics` stop the async process.
-
-#### Autocomplete
-
-You can use RTags as source for auto-complete suggestions. Notes:
-
-* This feature makes RTags be the *only* source for auto-complete in C/C++
-  mode, e.g. all other classic sources such as names in open buffers are
-  disabled. The reasoning being that surely Clang must be more accurate.
-* This feature requires RTags diagnostics to be turned on.
-
-To enable it automatically, set the variable `exordium-rtags-auto-complete` to
-true in your `prefs.el`. Note that auto-complete for `#include` header files
-does not work in this case, because it does not know what project you are in.
-
-To enable it manually, type <kbd>C-c r A</kbd>. This will take effect for all
-C++ files you open from that point. This key also sets auto-complete for the
-`#include` header files in the current project.
-
-Possible issues:
-
-* There might be a graphical glitch in the auto-complete popup if the Emacs
-  window is too small. Just enlarge the window a bit if this happens.
-* It's a tiny bit slow and it may trigger rdm a bit often.
-* Auto-complete for header files does not understand when you are switching
-  project.
-
-#### Company
-
-As an alternative to `auto-complete` you can choose `company-mode`. You can
-do that by setting `exordium-complete-mode` to `:company`. It will use
-RTags as a completion engine when `rdm` is started.
 
 ### include-what-you-use
 
@@ -812,10 +551,13 @@ accurate, Exordium support does not include automatic file modification.
 Instead it provides support to spawn the process and capture the suggestions
 in a diagnostic buffer that can be later checked by human.
 
-Similarly to RTags, `include-what-you-use` relies on the compilation database
-to be available in `compile_commands.json` file. It uses
-`exordium-rtags-cmake-build-dir` to locate the compilation database for the
-current project.
+`include-what-you-use` relies on the compilation database to be available in
+`compile_commands.json` file. It searches for one in the following locations:
+`cmake.bld/Linux`, `build`, `bld`, `cmake-build`
+`cmake-build/linux_64_static_ninja_Debug`,
+`cmake-build/linux_64_static_make_Debug`,
+`cmake-build/linux_64_static_ninja_Release`, and
+`cmake-build/linux_64_static_make_Release`.
 
 On top of that two variables are available to customise the behavior:
 
@@ -885,79 +627,111 @@ The configuration variable is `exordium-treesit-modes-enable` and is disabled by
 The main file of the configuration is `init.el`. It looks like this:
 
 ```lisp
-;;; 1. Load all before-init.el files. The ~/.emacs.d/before-init.el
-;;; comes first (if exists), followed by any existing before-init.el
-;;; file from all ~/.emacs.d/taps/subdirs.
+;; 1. Load all before-init.el files.  The ~/.emacs.d/before-init.el comes first
+;; (if exists), followed by all existing before-init.el files from all
+;; ~/.emacs.d/taps/subdirs.
+;; Load before init files
 (dolist (tapped-file exordium-tapped-before-init-files)
-  (load tapped-file))
+  (message "Loadding tapped before-init file: %s" tapped-file)
+  (load (file-name-sans-extension tapped-file)))
 
-;;; 2. Define the list of Melpa packages that we need, and load any missing
-;;; one. Note that they are NOT updated automatically.
+;; 2. Define the list of Melpa packages that we need, and load any missing one.
+;; Note that they are NOT updated automatically.
+;; [...]
 
-;;; 3. Local preferences: load all prefs.el. The ~/.emacs.d/prefs.el
-;;; comes first (if exists), followed by any existing prefs.el
-;;; file from all ~/.emacs.d/taps/subdirs.
-(require 'init-prefs)       ; defines variables that prefs.el can override
+;; 3. Local preferences: load all prefs.el.  The ~/.emacs.d/prefs.el comes
+;; first (if exists), followed by all existing prefs.el file from all
+;; ~/.emacs.d/taps/subdirs.
 (dolist (tapped-file exordium-tapped-prefs-files)
-  (load tapped-file))
+  (message "Loadding tapped prefs file: %s" tapped-file)
+  (load (file-name-sans-extension tapped-file)))
 
-;;; 4. Load the "modules" in ~/.emacs.d/modules. See below.
+;; 4. Load the default theme in ~/.emacs.d/themes. See below.
 
-;;; 5. Load the default theme in ~/.emacs.d/themes.
+;; 5. Load the "modules" in ~/.emacs.d/modules. See below.
 
-;;; 6. Load all after-init.el files.The ~/.emacs.d/after-init.el
-;;; comes first (if exists), followed by any existing after-init.el
-;;; file from all ~/.emacs.d/taps/subdirs.
+;; 6. Load all after-init.el files.The ~/.emacs.d/after-init.el comes first (if
+;; exists), followed by all existing after-init.el file from all
+;; ~/.emacs.d/taps/subdirs.
+;; Local extensions
 (dolist (tapped-file exordium-tapped-after-init-files)
-  (load tapped-file))
+  (message "Loadding tapped after-init file: %s" tapped-file)
+  (load (file-name-sans-extension tapped-file)))
 ```
 
 Modules can be individually commented out if needed:
 
 ```lisp
-;;; Uncomment the modules you'd like to use and restart Emacs afterwards,
-;;; or evaluate the require expression with M-C-x.
+;; Themes
+;; Note: use "export TERM=xterm-256color" for emacs -nw
+(setq custom-theme-directory exordium-themes-dir)
+(exordium-require 'init-progress-bar)
 
-;;; Look and feel
-(require 'init-look-and-feel)   ; fonts, UI, keybindings, saving files etc.
-(require 'init-linum)           ; line numbers
+(when exordium-nw
+  (set-face-background 'highlight nil))
+(when exordium-theme
+  (exordium-require 'init-themes))
 
-;;; Usability
-(require 'init-window-manager)  ; navigate between windows
-(require 'init-util)            ; utilities like match paren, bookmarks...
-(require 'init-ido)             ; supercharged completion engine
-(require 'init-highlight)       ; highlighting current line, symbol under point
-(cond ((eq exordium-complete-mode :auto-complete)
-       (require 'init-autocomplete)) ; auto-completion (see below for RTags AC)
-      ((eq exordium-complete-mode :company)
-       (require 'init-company))) ; company mode (rtags are on by default)
-(when exordium-helm-projectile  ; find files anywhere in project
-  (require 'init-helm-projectile))
-(require 'init-helm)            ; setup helm
+;; Look and feel
+(exordium-require 'init-look-and-feel)     ; fonts, UI, keybindings, saving files etc.
+(exordium-require 'init-font-lock)         ; enables/disables font-lock globally.
+(exordium-require 'init-linum)             ; line numbers
+(when exordium-smooth-scroll
+  (exordium-require 'init-smooth-scroll)
+  (smooth-scroll-mode 1))                  ; smooth scroll
 
-;;; Magit and git gutter
-(require 'init-git)
+(update-progress-bar)
 
-;;; Themes
-(if exordium-nw
-    (set-face-background 'highlight nil)
-  ;; Using Emacs with GUI:
-  (require 'init-themes)
-  (require 'init-powerline))
+;; Usability
+(exordium-require 'init-window-manager)   ; navigate between windows
+(exordium-require 'init-util)             ; utilities like match paren, bookmarks...
+(unless exordium-helm-everywhere
+  (exordium-require 'init-ido))           ; supercharged completion engine
+(exordium-require 'init-highlight)        ; highlighting current line, symbol under point
 
-;;; Shell mode
-(require 'init-shell)
+(pcase exordium-complete-mode
+  (:auto-complete
+   (exordium-require 'init-autocomplete))
+  (:company
+   (exordium-require 'init-company)))     ; completion
 
-;;; Major modes
-(require 'init-markdown)
-(require 'init-org)
-(require 'init-xml)
+(exordium-require 'init-helm)             ; setup helm
+(when exordium-projectile
+  (exordium-require 'init-projectile))
+(when (and exordium-projectile exordium-helm-projectile)
+  (exordium-require 'init-helm-projectile))
 
-;;; OS-specific things
-(when *environment-osx*
-  (require 'init-osx))
+(when exordium-help-extensions
+  (exordium-require 'init-help))           ; extra help
 
-;;; Etc.
+(update-progress-bar)
+
+(exordium-require 'init-dired)            ; enable dired+ and wdired permission editing
+(exordium-require 'init-git)              ; Magit and git gutter
+(exordium-require 'init-git-visit-diffs)  ; visit diffs in successive narrowed buffers
+(exordium-require 'init-forge)            ; Forge
+(exordium-require 'init-flb-mode)         ; frame-local buffers
+
+(update-progress-bar)
+
+;; Prog mode
+(exordium-require 'init-prog-mode )
+
+;; Shell mode
+(exordium-require 'init-prog-mode)
+
+;; Major modes
+(exordium-require 'init-markdown)
+(exordium-require 'init-org)
+(exordium-require 'init-xml)
+
+;; OS-specific things
+(when exordium-osx
+  (exordium-require 'init-osx))
+
+;; C++
+(exordium-require 'init-cpp)
+;; Etc.
 ```
 
 If you are looking for a specific feature or key binding,
@@ -994,6 +768,19 @@ rename your tapped repositories (clones). The [Local files](#local-files) from
 your `~/.emacs.d` are always first in each respective tapped list. Each tapped
 list is processed (each file from it is loaded) as a replacement for a
 respective [Local file](#local-files).
+
+Note that Exordium doesn't add any directory to a load path. If your tap expects
+that it's directory tree is in load path, you can use the following code to
+update the load-path:
+
+```lisp
+(eval-when-compile
+  (unless (featurep 'init-require)
+    (load (file-name-concat (locate-user-emacs-file "modules") "init-require"))))
+(exordium-require 'init-lib)
+(when (bound-and-true-p load-file-name)
+  (exordium-add-directory-tree-to-load-path (file-name-directory load-file-name)))
+```
 
 Exordium-specific emacs functions are WIP.
 
@@ -1169,13 +956,11 @@ in `provide` and the symbol in `require` are the same.
   removes all `.elc` files (if you restart Emacs it will not compile
   anything). `M-x force-recompile-modules` recompiles everything.
 
-* RTags now uses memory mapped files instead of loading projects into
-  memory. It may be slow if your home directory is NFS-mounted, since by
-  default the index is stored in `~/.rtags`. The solution is to store the index
-  on a local drive, preferably an SSD. You do this by creating a file
-  `~/.rdmrc` with a content like this: `--data-dir=/local/drive/.rtags`.
-
 ### Configuration profiling
+
+<kbd>M-x use-package-report</kbd> shows the time `use-package` and
+`exordium-require` used to load and configure packages.  Note that the times
+for `exordium-require` have corresponding `use-package` times included.
 
 <kbd>M-x emacs-init-time</kbd> shows the time Emacs took to start. You can profile the
 configuration using this command (this example is for OS X):
@@ -1184,3 +969,7 @@ configuration using this command (this example is for OS X):
 $ Applications/Emacs.app/Contents/MacOS/Emacs -Q -l ~/.emacs.d/extensions/profile-dotemacs.el -f profile-dotemacs
 
 ```
+
+It's probably not the best idea to profile your first start as the bulk of the
+startup time in such a case is spent on downloading and byte-compiling
+packages.

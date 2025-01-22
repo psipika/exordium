@@ -1,51 +1,59 @@
-;;; color-theme-github.el ---  mimicking the look of GitHub's code viewer
-;;;
-;;; Credits:
-;;; Details copied from Philip Arvidsson's modern github theme
-;;; https://github.com/philiparvidsson/GitHub-Modern-Theme-for-Emacs
+;;; color-theme-github.el ---  mimicking the look of GitHub's code viewer -*- lexical-binding: t -*-
+
+;;; Commentary:
+;;
+;; Credits:
+;; Details copied from Philip Arvidsson's modern github theme
+;; https://github.com/philiparvidsson/GitHub-Modern-Theme-for-Emacs
+
+;;; Code:
 
 (require 'org)
-(require 'init-prefs)
 
-;;; Color palette.
-;;; `+N' suffixes indicate a color is lighter.
-;;; `-N' suffixes indicate a color is darker.
-
-(defconst github-colors
-  '((github-border                 . "#d0d0d0")
-    (github-comment                . "#6a737d")
-    (github-constant               . "#005cc5")
-    (github-diff-added             . "#e6ffed")
-    (github-diff-added-highlight   . "#acf2bd")
-    (github-diff-changed           . "#ffe1b9")
-    (github-diff-changed-highlight . "#ffc86f")
-    (github-diff-removed           . "#ffeef0")
-    (github-diff-removed-highlight . "#fdb8c0")
-    (github-function               . "#6f42c1")
-    (github-header-bg              . "#d73a49")
-    (github-header-fg              . "#ffffff")
-    (github-highlight              . "#fffbdd")
-    (github-header-bg              . "#24292e")
-    (github-header-fg              . "#bcbdc0")
-    (github-html-tag               . "#22863a")
-    (github-keyword                . "#d73a49")
-    (github-selection              . "#3390ff")
-    (github-string                 . "#032f62")
-    (github-text                   . "#24292e")
-    (github-white                  . "#ffffff")))
+(eval-when-compile
+  (unless (featurep 'init-require)
+    (load (file-name-concat (locate-user-emacs-file "modules") "init-require"))))
+(exordium-require 'init-prefs)
 
 ;;; Theme definition
 
 (defmacro with-github-colors (&rest body)
-  "Execute `BODY' in a scope with variables bound to the github colors."
-  `(let ((class '((class color) (min-colors 89)))
-         ,@(mapcar (lambda (cons)
-                     (list (car cons) (cdr cons)))
-                   github-colors))
-     ,@body))
+  "Execute BODY in a scope with variables bound to the github colors."
+  ;; Color palette.
+  ;; `+N' suffixes indicate a color is lighter.
+  ;; `-N' suffixes indicate a color is darker.
+  (let ((github-colors
+         '((github-border                 . "#d0d0d0")
+           (github-comment                . "#6a737d")
+           (github-constant               . "#005cc5")
+           (github-diff-added             . "#e6ffed")
+           (github-diff-added-highlight   . "#acf2bd")
+           (github-diff-changed           . "#ffe1b9")
+           (github-diff-changed-highlight . "#ffc86f")
+           (github-diff-removed           . "#ffeef0")
+           (github-diff-removed-highlight . "#fdb8c0")
+           (github-function               . "#6f42c1")
+           (github-highlight              . "#fffbdd")
+           (github-header-bg              . "#24292e")
+           (github-header-fg              . "#bcbdc0")
+           (github-html-tag               . "#22863a")
+           (github-keyword                . "#d73a49")
+           (github-selection              . "#3390ff")
+           (github-string                 . "#032f62")
+           (github-text                   . "#24292e")
+           (github-white                  . "#ffffff"))))
+    `(let ((class '((class color) (min-colors 89)))
+           ,@(mapcar (lambda (cons)
+                       (list (car cons) (cdr cons)))
+                     github-colors))
+       (ignore class)
+       ,@(mapcar (lambda (cons)
+                   `(ignore ,(car cons)))
+                 github-colors)
+       ,@body)))
 
 (defmacro github-face-specs ()
-  "Return a backquote which defines a list of face specs.
+  "Return a backquote with a list of face specs definitions.
 It expects to be evaluated in a scope in which the various color
 names to which it refers are bound."
   (quote
@@ -176,7 +184,7 @@ names to which it refers are bound."
      (font-latex-sectioning-5-face ((t (:foreground ,github-string :weight bold ))))
      (font-latex-sedate-face ((t (:foreground ,github-keyword))))
      (font-latex-italic-face ((t (:foreground ,github-function :slant italic))))
-     (font-latex-string-face ((t (:inherit ,font-lock-string-face))))
+     (font-latex-string-face ((t (:inherit font-lock-string-face))))
      (font-latex-math-face ((t (:foreground ,github-text))))
 ;;;;; agda-mode
      (agda2-highlight-keyword-face ((t (:foreground ,github-keyword :weight bold))))
@@ -1124,24 +1132,24 @@ names to which it refers are bound."
 ;;;;; volatile-highlights
      (vhl/default-face ((t (:background ,github-highlight))))
 ;;;;; web-mode
-     (web-mode-builtin-face ((t (:inherit ,font-lock-builtin-face))))
-     (web-mode-comment-face ((t (:inherit ,font-lock-comment-face))))
-     (web-mode-constant-face ((t (:inherit ,font-lock-constant-face))))
+     (web-mode-builtin-face ((t (:inherit font-lock-builtin-face))))
+     (web-mode-comment-face ((t (:inherit font-lock-comment-face))))
+     (web-mode-constant-face ((t (:inherit font-lock-constant-face))))
      (web-mode-css-at-rule-face ((t (:foreground ,github-comment ))))
      (web-mode-css-prop-face ((t (:foreground ,github-constant))))
      (web-mode-css-pseudo-class-face ((t (:foreground ,github-html-tag :weight bold))))
      (web-mode-css-rule-face ((t (:foreground ,github-html-tag))))
-     (web-mode-doctype-face ((t (:inherit ,font-lock-comment-face))))
+     (web-mode-doctype-face ((t (:inherit font-lock-comment-face))))
      (web-mode-folded-face ((t (:underline t))))
      (web-mode-function-name-face ((t (:foreground ,github-comment))))
      (web-mode-html-attr-name-face ((t (:foreground ,github-function))))
-     (web-mode-html-attr-value-face ((t (:inherit ,font-lock-string-face))))
+     (web-mode-html-attr-value-face ((t (:inherit font-lock-string-face))))
      (web-mode-html-tag-face ((t (:foreground ,github-html-tag))))
-     (web-mode-keyword-face ((t (:inherit ,font-lock-keyword-face))))
-     (web-mode-preprocessor-face ((t (:inherit ,font-lock-preprocessor-face))))
-     (web-mode-string-face ((t (:inherit ,font-lock-string-face))))
-     (web-mode-type-face ((t (:inherit ,font-lock-type-face))))
-     (web-mode-variable-name-face ((t (:inherit ,font-lock-variable-name-face))))
+     (web-mode-keyword-face ((t (:inherit font-lock-keyword-face))))
+     (web-mode-preprocessor-face ((t (:inherit font-lock-preprocessor-face))))
+     (web-mode-string-face ((t (:inherit font-lock-string-face))))
+     (web-mode-type-face ((t (:inherit font-lock-type-face))))
+     (web-mode-variable-name-face ((t (:inherit font-lock-variable-name-face))))
      (web-mode-server-background-face ((t (:background ,github-white))))
      (web-mode-server-comment-face ((t (:inherit web-mode-comment-face))))
      (web-mode-server-string-face ((t (:inherit web-mode-string-face))))
@@ -1208,7 +1216,7 @@ names to which it refers are bound."
      )))
 
 (defmacro github-variables ()
-  "Return a backquote which defines a list of variables.
+  "Return a backquote which define a list of variables.
 It expects to be evaluated in a scope in which the various color
 names to which it refers are bound."
   (quote
@@ -1250,7 +1258,7 @@ names to which it refers are bound."
      )))
 
 (defun define-github-modern-theme ()
-  "Define the github theme (only one variant for now)"
+  "Define the github theme (only one variant for now)."
   (deftheme github-modern "A low contrast theme")
   (with-github-colors
    (apply 'custom-theme-set-faces 'github-modern (github-face-specs)))
@@ -1261,7 +1269,7 @@ names to which it refers are bound."
 ;;; Debugging functions
 
 (defun set-colors-github ()
-  "Sets the colors to the github theme"
+  "Set the colors to the github theme."
   (interactive)
   (with-github-colors
     (apply 'custom-set-faces (github-face-specs))))
