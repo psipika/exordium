@@ -350,6 +350,7 @@ Keybinding          | Description
 <kbd>C-x b</kbd>    | Switch buffer.
 <kbd>C-x C-f</kbd>  | Find file.
 <kbd>C-x c g</kbd>  | Google suggest.
+<kbd>C-c C-p</kbd>  | Edit helm ag/grep/occur etc. search results (after exporting/saving them).
 
 ### Other Helm tools
 
@@ -358,17 +359,14 @@ will start different search modes. By default, they will use symbol under the po
 However if it is not there just start typing text: the Helm window shows all
 matching lines, and you can jump from one to another using the arrow keys.
 
-Some of them will use  [Helm Swoop](https://github.com/ShingoFukuyama/helm-swoop) while
-the reminder will use [Silver Searcher](https://github.com/ggreer/the_silver_searcher).
+Some of them will use [Silver Searcher](https://github.com/ggreer/the_silver_searcher).
 The latter, abbreviated `Ag`, being substitute to `grep` and `ack` has support for regular
 expressions.
 
 * <kbd>C-S-a</kbd>: Ag search for text in current projectile project.
-* <kbd>C-S-s</kbd> or <kbd>M-x helm-swoop</kbd>: Swoop search for text in current buffer.
+* <kbd>C-S-s</kbd> or <kbd>M-x helm-occur</kbd>: Find occurrences of text in current buffer.
 * <kbd>C-S-d</kbd>: Ag search for text, but ask for directory to start first.
-* <kbd>C-S-f</kbd>: Ag search for text in current buffer (similar to Swoop).
 * <kbd>C-S-r</kbd>: ripgrep search for text in current projectile project.
-* <kbd>M-x helm-multiple-swoop-all</kbd>: Swoop search within all buffers.
 
 Note that <kbd>C-S-a</kbd> and <kbd>C-S-r</kbd> work also directly from
 `helm-projectile-switch-project`. This means that you searching a project with `ag` or `rg`
@@ -847,8 +845,8 @@ following will give you this:
 ### Local modules
 
 You can create a directory `~/.emacs.d/local` for your own local modules (this
-directory is ignored in git). In that case you should use `require` forms in
-`after-init.el` to load them.
+directory is ignored in git). Since this directory is not included in the load-path, one way to load modules from that local directory is to use `exordium-require` in
+`after-init.el` with an additional location argument.
 
 Here is an example. Create a file named `~/.emacs.d/local/init-test-local.el`
 with this content:
@@ -868,7 +866,8 @@ Then create a file `~/.emacs.d/after-init.el` with this content:
 
 (message "**** after_init ****")
 
-(require 'init-test-local)
+(exordium-require 'init-test-local
+  :location "local")
 ```
 
 Restart Emacs. The message buffer should show two lines:
@@ -879,7 +878,7 @@ Restart Emacs. The message buffer should show two lines:
 ```
 
 Local modules files can be named anything as long as the file name, the symbol
-in `provide` and the symbol in `require` are the same.
+in `provide` and the symbol in `exordium-require` are the same.
 
 ## Troubleshooting
 
