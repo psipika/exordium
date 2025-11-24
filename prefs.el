@@ -21,11 +21,11 @@
 		(setq exordium-theme 'tomorrow-day))))
       ((setq exordium-preferred-frame-width 90
 	     exordium-preferred-frame-height 40)
-       (setq exordium-preferred-fonts '(("Droid Sans Mono"  . 100)
-                                        ("DejaVu Sans Mono" . 100)
-                                        ("Monospace"        . 100)
-                                        ("Inconsolata"      . 100)
-                                        ("Mono"             . 100)))
+       (setq exordium-preferred-fonts '(("Droid Sans Mono"  . 120)
+                                        ("DejaVu Sans Mono" . 120)
+                                        ("Monospace"        . 120)
+                                        ("Inconsolata"      . 120)
+                                        ("Mono"             . 140)))
        (when (display-graphic-p)
          (setq exordium-theme 'material))))
 
