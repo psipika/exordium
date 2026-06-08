@@ -7,8 +7,10 @@
                                  company
                                  dockerfile-mode
                                  forge
+                                 graphql-mode
                                  graphviz-dot-mode
                                  groovy-mode
+                                 hcl-mode
                                  jedi
                                  jinja2-mode
                                  markdown-toc
